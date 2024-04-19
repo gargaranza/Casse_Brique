@@ -2,8 +2,9 @@
 #include <utility>
 #include <cstddef>
 #include <array>
-#include "squareBloc.hpp"
+#include "squareBloc.cpp"
 #include "blocType.hpp"
+#include "blocContainer.hpp"
 #include "grid.cpp"
 
 #define WINDOW_WIDTH 700
@@ -29,7 +30,7 @@ void drawSquare() {
     BlocType<Uint32> resistant {SDL_MapRGB(win_surf->format, 150, 150, 150), 50};
     BlocType<Uint32> invincible {SDL_MapRGB(win_surf->format, 0, 0, 0), 1000000};
 
-    Grid<33, 12, 0, 0, 0, 1> grille {win_surf};
+    Grid<Uint32, 33, 12, 0, 0, 0, 1> grille {win_surf};
 
     grille.fill(invincible);
     grille.fillColumns(faible, 0);
@@ -45,7 +46,7 @@ void drawSquare() {
 }
 
 
-int main(int argc, char const *argv[]) {
+int main(/*int argc, char const *argv[]*/) {
     init();
 
     changeColor();

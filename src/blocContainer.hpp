@@ -9,12 +9,13 @@ class BlocContainer {
         ContT container_;
         SDL_Surface* surface_;
 
+        inline BlocContainer(SDL_Surface* surface): surface_{surface} {};
         inline BlocContainer(ContT container, SDL_Surface* surface): container_{container}, surface_{surface} {};
 
     public:
-        virtual ~BlocContainer() = 0;
+        virtual ~BlocContainer() {};
 
-        virtual void draw();
+        virtual void draw() const {};
 };
 
 #endif //BLOCCONTAINER_H

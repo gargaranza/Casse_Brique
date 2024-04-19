@@ -2,7 +2,7 @@
 CC = g++
 
 # Compiler flags
-CFLAGS = -Wall -std=c++20 -I /usr/include/SDL2
+CFLAGS =  -std=c++20 -Wall -Wextra -I /usr/include/SDL2
 
 # SDL flags
 SDLFLAGS = -lSDL2
@@ -22,7 +22,7 @@ all: $(EXEC)
 $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(EXEC) $(SDLFLAGS)
 
-main.o: main.cpp bloc.hpp blocType.hpp ballType.hpp squareBloc.hpp grid.hpp ball.hpp
+main.o: main.cpp bloc.hpp blocType.hpp ballType.hpp blocContainer.hpp squareBloc.hpp grid.hpp ball.hpp
 	$(CC) $(CFLAGS) -c $(SRCS)
 
 # Clean

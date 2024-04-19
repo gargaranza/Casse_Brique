@@ -27,6 +27,8 @@ class Bloc{
         inline bool isBroken() const {return PV_ == 0;}
         inline bool takeDamage(size_t dmg) {PV_ = std::max(PV_<1000000 ? PV_ - dmg : PV_, static_cast<size_t>(0)) ; return isBroken();}
         
+        inline PosT getPosition() const {return position_;};
+        
 };
 
 #endif //BLOC_H
