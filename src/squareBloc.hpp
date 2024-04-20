@@ -4,6 +4,8 @@
 #include <SDL2/SDL.h>
 #include <utility>
 #include <cstddef>
+#include <iostream>
+#include "global.h"
 #include "bloc.hpp"
 #include "blocType.hpp"
 
@@ -12,8 +14,8 @@ class SquareBloc: public Bloc<std::pair<int, int>, SDL_Rect, FontT, BlocType<Fon
     public:
         SquareBloc() = delete;
 
-        SquareBloc(SDL_Surface* surface, std::pair<int, int> pos, size_t c, FontT font, size_t pv);
-        void draw() const;
+        SquareBloc(std::pair<int, int> pos, size_t c, FontT font, size_t pv);
+        void draw();
 
         ~SquareBloc() = default;
 };

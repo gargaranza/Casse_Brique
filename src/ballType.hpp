@@ -8,16 +8,16 @@ template <typename FontT>
 class BallType {
     private:
         const size_t DEGATS;
-        const size_t TAILLE;
+        const size_t RAYON;
         const FontT FONT_BASE;
     
     public:
         BallType() = delete;
-        inline BallType(FontT font, size_t taille, size_t degats): DEGATS{degats}, TAILLE{taille}, FONT_BASE{font} {};
+        inline BallType(FontT font, size_t rayon, size_t degats): DEGATS{degats}, RAYON{rayon}, FONT_BASE{font} {};
 
-        inline size_t getTaille() {return TAILLE;};
-        inline size_t getDegats() {return DEGATS;};
-        inline FontT getFont() {return FONT_BASE;};
+        inline size_t getRayon() const {return RAYON;};
+        inline size_t getDegats() const {return DEGATS;};
+        inline FontT getFont() const {return FONT_BASE;};
 };
 
 

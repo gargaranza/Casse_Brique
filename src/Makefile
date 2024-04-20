@@ -8,7 +8,7 @@ CFLAGS =  -std=c++20 -Wall -Wextra -I /usr/include/SDL2
 SDLFLAGS = -lSDL2
 
 # Source files
-SRCS = main.cpp squareBloc.cpp grid.cpp ball.cpp
+SRCS = main.cpp squareBloc.cpp grid.cpp ball.cpp ballManager.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)
@@ -22,7 +22,7 @@ all: $(EXEC)
 $(EXEC): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(EXEC) $(SDLFLAGS)
 
-main.o: main.cpp bloc.hpp blocType.hpp ballType.hpp blocContainer.hpp squareBloc.hpp grid.hpp ball.hpp
+main.o: main.cpp global.h bloc.hpp blocType.hpp ballType.hpp blocContainer.hpp squareBloc.hpp grid.hpp ball.hpp ballManager.hpp
 	$(CC) $(CFLAGS) -c $(SRCS)
 
 # Clean

@@ -8,7 +8,7 @@
 template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>
 SquareBloc<FontT>* Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::createBloc(BlocType<FontT> type, size_t i, size_t j) {
     return new SquareBloc{
-        this->surface_, {left_shift + gap + taille_ / width * i + (taille_ - taille_/width * width) / 2, 
+        {left_shift + gap + taille_ / width * i + (taille_ - taille_/width * width) / 2, 
             top_shift + gap + taille_ / width * (height - j - 1)}, 
         taille_/width - gap, type.getFont(), type.getPV()
     };
@@ -22,7 +22,6 @@ void Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::addBlo
 
 template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>
 void Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::fillLine(BlocType<FontT> type, size_t j) {
-    assert(j < height);
     for (size_t i = 0 ; i < width ; i++) {
         addBloc(type, i, j);
     }
@@ -45,7 +44,6 @@ void Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::fillLi
 
 template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>
 void Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::fillColumn(BlocType<FontT> type, size_t i) {
-    assert(i < width);
     for (size_t j = 0 ; j < height ; j++) {
         addBloc(type, i, j);
     }

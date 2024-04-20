@@ -1,16 +1,15 @@
 #ifndef BLOCCONTAINER_H
 #define BLOCCONTAINER_H
 
-#include <SDL2/SDL.h>
+#include "global.h"
 
 template <typename ContT>
 class BlocContainer {
     protected:
         ContT container_;
-        SDL_Surface* surface_;
 
-        inline BlocContainer(SDL_Surface* surface): surface_{surface} {};
-        inline BlocContainer(ContT container, SDL_Surface* surface): container_{container}, surface_{surface} {};
+        BlocContainer() = default;
+        inline BlocContainer(ContT &container): container_{container} {};
 
     public:
         virtual ~BlocContainer() {};

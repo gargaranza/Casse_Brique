@@ -5,6 +5,8 @@
 #include <cstddef>
 #include <array>
 #include <utility>
+#include <iostream>
+#include "global.h"
 #include "blocContainer.hpp"
 #include "blocType.hpp"
 #include "squareBloc.hpp"
@@ -14,7 +16,7 @@ class Grid : public BlocContainer<std::array<std::array<SquareBloc<FontT>*, heig
     const size_t taille_;
     
     public:
-        inline Grid(SDL_Surface* surface): BlocContainer<std::array<std::array<SquareBloc<FontT>*, height>, width>>{surface}, taille_{surface->w - right_shift - left_shift} {};
+        inline Grid(): taille_{WINDOW_WIDTH - right_shift - left_shift} {};
 
     private:
         SquareBloc<FontT>* createBloc(BlocType<FontT> type, size_t i, size_t j);
@@ -29,6 +31,8 @@ class Grid : public BlocContainer<std::array<std::array<SquareBloc<FontT>*, heig
         void fill(BlocType<FontT> type);
 
         void draw() const override;
+
+        SquareBloc<FontT>* getCase(size_t i, size_t j) {return this->container_.at(i).at(j);};
 
         ~Grid();
 };
