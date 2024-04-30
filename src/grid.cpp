@@ -80,6 +80,7 @@ void Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::draw()
             this->container_.at(i).at(j)->draw();
         }
     }
+    window->display();
 };
 
 template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>

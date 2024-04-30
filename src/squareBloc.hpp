@@ -10,7 +10,7 @@
 #include "blocType.hpp"
 
 template <typename FontT>
-class SquareBloc: public Bloc<std::pair<int, int>, SDL_Rect, FontT, BlocType<FontT>> {
+class SquareBloc: public Bloc<std::pair<int, int>, sf::RectangleShape, FontT, BlocType<FontT>> {
     public:
         SquareBloc() = delete;
 

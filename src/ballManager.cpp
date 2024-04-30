@@ -1,8 +1,10 @@
 
+#include <thread>
+#include <chrono>
 #include "ballManager.hpp"
 
 template <typename BallT, typename ContT>
-void BallManager<BallT, ContT>::run(size_t delay){
+void BallManager<BallT, ContT>::run(){
     running = true;
     std::cout << "Running" << std::endl;
     while (running) {
@@ -14,15 +16,11 @@ void BallManager<BallT, ContT>::run(size_t delay){
             static_cast<int>(ball_.getCenter().second) - static_cast<int>(ball_.getRadius()) <= 0) {
             ball_.setSpeed({ball_.getSpeed().first, -ball_.getSpeed().second});
         }
-        SDL_SetRenderDrawColor(pRenderer, 0, 0, 0, 255);
-        SDL_RenderClear(pRenderer);
         ball_.updatePosition();
+        window->clear();
         conteneur_->draw();
         ball_.draw();
-        SDL_RenderPresent(pRenderer);
-
-        SDL_Delay(delay);
-        std::cout << "!";
+        std::this_thread::sleep_for(std::chrono::milliseconds(3));
     }
     std::cout << "\nEnd Running" << std::endl;
 };

@@ -2,13 +2,13 @@
 CC = g++
 
 # Compiler flags
-CFLAGS =  -std=c++20 -Wall -Wextra -I /usr/include/SDL2
+CFLAGS = -std=c++20 -Wall -Wextra
 
 # SDL flags
-SDLFLAGS = -lSDL2
+SDLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
 
 # Source files
-SRCS = main.cpp squareBloc.cpp grid.cpp ball.cpp ballManager.cpp
+SRCS = main.cpp squareBloc.cpp grid.cpp ballManager.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)

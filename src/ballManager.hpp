@@ -19,7 +19,7 @@ class BallManager{
     public:
         inline BallManager(Ball<FontT> &ball, ContT* conteneur): ball_{ball}, conteneur_{conteneur} {};
 
-        void run(size_t delay);
+        void run();
         inline void stop() {running = false;};
 
 };

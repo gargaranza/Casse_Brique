@@ -3,21 +3,17 @@
 
 template <typename FontT>
 SquareBloc<FontT>::SquareBloc(std::pair<int, int> pos, size_t c, FontT font, size_t pv):
-    Bloc<std::pair<int, int>, SDL_Rect, FontT, BlocType<FontT>>{
-        pos, {pos.first, pos.second, static_cast<int>(c), static_cast<int>(c)}, {font, pv}, font, pv} 
-{};
+    Bloc<std::pair<int, int>, sf::RectangleShape, FontT, BlocType<FontT>>{
+        pos, sf::RectangleShape{}, {font, pv}, font, pv} {
+    this->forme_.setSize(sf::Vector2f{static_cast<float>(c), static_cast<float>(c)});
+    this->forme_.setPosition(static_cast<float>(pos.first), static_cast<float>(pos.second));
+    this->forme_.setFillColor(font);
+};
 
 template <typename FontT>
 void SquareBloc<FontT>::draw() {
     if (!this->isBroken()) {
-        Uint8 r {Uint8(255)};
-        Uint8 g {Uint8(255)};
-        Uint8 b {Uint8(255)};
-
-        SDL_GetRGB(this->font_, win_surf->format, &r, &g, &b);
-        SDL_SetRenderDrawColor(pRenderer, r, g, b, SDL_ALPHA_OPAQUE);
-
-        SDL_RenderFillRect(pRenderer, &this->forme_);
+        window->draw(this->forme_);
     }
 };
 

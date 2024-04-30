@@ -4,46 +4,36 @@
 #include <memory>
 #include <iostream>
 #include <thread>
+#include <chrono>
 
 #include "global.h"
 #include "squareBloc.cpp"
 #include "blocType.hpp"
 #include "blocContainer.hpp"
 #include "grid.cpp"
-#include "ball.cpp"
+#include "ball.hpp"
 #include "ballManager.cpp"
 
-SDL_Window* pWindow = nullptr;
-SDL_Surface* win_surf = nullptr;
-SDL_Renderer* pRenderer = nullptr;
+sf::RenderWindow* window = nullptr;
 
-using Grille = Grid<Uint32, 33, 12, 0, 0, 0, 1>;
+using Grille = Grid<sf::Color, 33, 12, 0, 0, 0, 1>;
 
 void init() {
-    SDL_Init(SDL_INIT_EVERYTHING);
-    pWindow = SDL_CreateWindow("Casse Brique", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-    pRenderer = SDL_CreateRenderer(pWindow, -1, SDL_RENDERER_ACCELERATED);
-	win_surf = SDL_GetWindowSurface(pWindow);
-}
-
-int myFun(void* data) {
-    SDL_Init(SDL_INIT_EVERYTHING);
-    static_cast<BallManager<Uint32, Grille>*>(data)->run(3);
-    return 0;
+    window = new sf::RenderWindow{sf::VideoMode{WINDOW_WIDTH, WINDOW_HEIGHT}, "Casse Brique"};
 }
 
 
 void main_loop() {
-    BlocType<Uint32> faible {SDL_MapRGB(win_surf->format, 0, 0, 200), 10};
-    BlocType<Uint32> moyen {SDL_MapRGB(win_surf->format, 200, 0, 0), 20};
-    BlocType<Uint32> resistant {SDL_MapRGB(win_surf->format, 150, 150, 150), 50};
-    BlocType<Uint32> invincible {SDL_MapRGB(win_surf->format, 0, 0, 0), 1000000};
+    BlocType<sf::Color> faible {sf::Color{0, 0, 200}, 10};
+    BlocType<sf::Color> moyen {sf::Color{200, 0, 0}, 20};
+    BlocType<sf::Color> resistant {sf::Color{150, 150, 150}, 50};
+    BlocType<sf::Color> invincible {sf::Color{0, 0, 0}, 1000000};
 
-    BallType<Uint32> classique {SDL_MapRGB(win_surf->format, 120, 255, 0), 5, 5};
+    BallType<sf::Color> classique {sf::Color{120, 255, 0}, 5, 5};
 
     Grille grille {};
-    Ball<Uint32> ball {classique, {WINDOW_WIDTH / 2, WINDOW_HEIGHT - 30}, {3, -2}};
-    BallManager<Uint32, Grille> manager {ball, &grille};
+    Ball<sf::Color> ball {classique, {WINDOW_WIDTH / 2, WINDOW_HEIGHT - 30}, {3, -2}};
+    BallManager<sf::Color, Grille> manager {ball, &grille};
     
     grille.fill(invincible);
     grille.fillLines(faible, 4, 0, 1, 2, 3);
@@ -52,16 +42,12 @@ void main_loop() {
 
     grille.draw();
 
-    //myFun(&manager);
+    std::thread myThread ([&manager] () {manager.run();});
 
-    SDL_Thread* thread = SDL_CreateThread(myFun, "Main Loop", &manager);
-
-    SDL_Delay(5000);
+    std::this_thread::sleep_for(std::chrono::seconds(5));
 
     manager.stop();
-
-    int threadReturnValue;
-    SDL_WaitThread(thread, &threadReturnValue);
+    myThread.join();
 
     std::cout << "Fin Main loop" << std::endl;
 }
@@ -73,8 +59,8 @@ int main(/*int argc, char const *argv[]*/) {
 
     main_loop();
 
-    SDL_DestroyWindow(pWindow);
-    SDL_Quit();
+    window->clear();
+    window->close();
 
     return 0;
 }
