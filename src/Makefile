@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -std=c++20 -Wall -Wextra
 
 # SDL flags
-SDLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+SDLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lX11
 
 # Source files
 SRCS = main.cpp squareBloc.cpp grid.cpp ballManager.cpp

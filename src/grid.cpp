@@ -8,7 +8,7 @@
 template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>
 SquareBloc<FontT>* Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::createBloc(BlocType<FontT> type, size_t i, size_t j) {
     return new SquareBloc{
-        {left_shift + gap + taille_ / width * i + (taille_ - taille_/width * width) / 2, 
+        {left_shift + gap + taille_ / width * i,// + (taille_ - taille_/width * width) / 2, 
             top_shift + gap + taille_ / width * (height - j - 1)}, 
         taille_/width - gap, type.getFont(), type.getPV()
     };
@@ -81,6 +81,19 @@ void Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::draw()
         }
     }
     window->display();
+};
+
+template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>
+std::vector<SquareBloc<FontT>*> Grid<FontT, width, height, left_shift, right_shift, top_shift, gap>::getBlocs(){
+    std::vector<SquareBloc<FontT>*> retVect {};
+
+    for (auto line : this->container_) {
+        for (auto bloc : line) {
+            retVect.push_back(bloc);
+        }
+    }
+
+    return retVect;
 };
 
 template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>

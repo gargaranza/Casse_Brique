@@ -15,6 +15,8 @@ class BlocContainer {
         virtual ~BlocContainer() {};
 
         virtual void draw() const {};
+        template <typename Bloc>
+        std::vector<Bloc*> getBlocs() {return std::vector<Bloc*> {};};
 };
 
 #endif //BLOCCONTAINER_H

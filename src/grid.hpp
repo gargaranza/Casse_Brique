@@ -13,10 +13,10 @@
 
 template <typename FontT, size_t width, size_t height, size_t left_shift, size_t right_shift, size_t top_shift, size_t gap>
 class Grid : public BlocContainer<std::array<std::array<SquareBloc<FontT>*, height>, width>> {
-    const size_t taille_;
+    const float taille_;
     
     public:
-        inline Grid(): taille_{WINDOW_WIDTH - right_shift - left_shift} {};
+        inline Grid(): taille_{static_cast<float>(WINDOW_WIDTH - right_shift - left_shift)} {};
 
     private:
         SquareBloc<FontT>* createBloc(BlocType<FontT> type, size_t i, size_t j);
@@ -31,6 +31,7 @@ class Grid : public BlocContainer<std::array<std::array<SquareBloc<FontT>*, heig
         void fill(BlocType<FontT> type);
 
         void draw() const override;
+        std::vector<SquareBloc<FontT>*> getBlocs();
 
         SquareBloc<FontT>* getCase(size_t i, size_t j) {return this->container_.at(i).at(j);};
 
