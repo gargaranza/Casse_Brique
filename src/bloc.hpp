@@ -27,7 +27,6 @@ class Bloc{
         inline bool takeDamage(size_t dmg) {if (isBroken()) return true ; PV_ = std::max(PV_<1000000 ? static_cast<int>(PV_) - dmg : PV_, static_cast<size_t>(0)) ; return isBroken();}
 
         virtual const std::vector<PosT> getCornerPoints() {return std::vector<PosT>{};};
-        virtual const std::vector<std::pair<sf::Vector2f, sf::Vector2f>> getSides() const {return std::vector<std::pair<sf::Vector2f, sf::Vector2f>> {};};
 
         virtual bool isIn(sf::Vector2f vect) {return vect == sf::Vector2f{};};
         

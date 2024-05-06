@@ -4,8 +4,8 @@
 #include "ballManager.hpp"
 
 
-template <typename BallT, typename ContT>
-sf::Vector2f BallManager<BallT, ContT>::intersection(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
+template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
+sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::intersection(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
 
     float det = (A.y - B.y)*V.x + (B.x - A.x) * V.y;
     sf::Vector2f P {A.x*(B.y-A.y) - A.y*(B.x-A.x), M.x*V.y - M.y*V.x};
@@ -19,8 +19,8 @@ sf::Vector2f BallManager<BallT, ContT>::intersection(sf::Vector2f A, sf::Vector2
     return sf::Vector2f{};
 };
 
-template <typename BallT, typename ContT>
-std::pair<bool, sf::Vector2f> BallManager<BallT, ContT>::collision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
+template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
+std::pair<bool, sf::Vector2f> BallManager<FontTBall, FontTPad, ContT, ShapeT>::collision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
     sf::Vector2f X {intersection(A, B, M, V)};
 
     /*if (X != sf::Vector2f{}) {
@@ -33,7 +33,7 @@ std::pair<bool, sf::Vector2f> BallManager<BallT, ContT>::collision(sf::Vector2f 
 
     if (X == sf::Vector2f{}) return std::pair<bool, sf::Vector2f> {false, X};
     else {
-        float d = std::sqrt((X.x - M.x)*(X.x - M.x) + (X.y - M.y)*(X.y - M.y));
+        float d = norme(X-M);//std::sqrt((X.x - M.x)*(X.x - M.x) + (X.y - M.y)*(X.y - M.y));
         float s = (X - M).x*V.x + (X - M).y*V.y;
         if ((d <= 1.1 * std::sqrt(V.x*V.x + V.y*V.y)) && (s > 10e-8)) {
             return std::pair<bool, sf::Vector2f> {true, X};
@@ -41,48 +41,118 @@ std::pair<bool, sf::Vector2f> BallManager<BallT, ContT>::collision(sf::Vector2f 
     }
 };
 
-template <typename BallT, typename ContT>
-sf::Vector2f BallManager<BallT, ContT>::updateSpeedCollision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f V) {
+template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
+sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::updateSpeedCollision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f V) {
     sf::Vector2f U {A-B};
-    float d = std::sqrt(U.x * U.x + U.y * U.y);
+    float d = norme(U);
     U = sf::Vector2f {U.y/d, -U.x/d};
-    float ps = V.x*U.x + V.y*U.y;
+    float ps = dotProd(V, U);
     return V-2*ps*U;
 }
 
+template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
+const std::vector<std::pair<sf::Vector2f, sf::Vector2f>> BallManager<FontTBall, FontTPad, ContT, ShapeT>::getSidesFromPoints(std::vector<sf::Vector2f> corners) const {
+    std::vector<std::pair<sf::Vector2f, sf::Vector2f>> sides;
+    sf::Vector2f last_point = corners.at(corners.size() - 1);
+    for (sf::Vector2f point : corners){
+        sides.push_back(std::pair<sf::Vector2f, sf::Vector2f> {last_point, point});
+        last_point = point;
+    }
+
+    return sides;
+}
 
 
-template <typename BallT, typename ContT>
-void BallManager<BallT, ContT>::makeCollisions() {
+template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
+void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
     //Border collisions
-    if (ball_.getCenter().x + ball_.getRadius() >= static_cast<float>(WINDOW_WIDTH) || 
-        ball_.getCenter().x - ball_.getRadius() <= 0.0) {
-        ball_.setSpeed({-ball_.getSpeed().x, ball_.getSpeed().y});
+    if (ball_.getCenter().x + ball_.getRadius() >= static_cast<float>(WINDOW_WIDTH)) {
+        ball_.setSpeed({-std::abs(ball_.getSpeed().x), ball_.getSpeed().y});
     }
-    if (ball_.getCenter().y + ball_.getRadius() >= static_cast<float>(WINDOW_HEIGHT) || 
-        ball_.getCenter().y - ball_.getRadius() <= 0.0) {
-        ball_.setSpeed({ball_.getSpeed().x, -ball_.getSpeed().y});
+    else if (ball_.getCenter().x - ball_.getRadius() <= 0.0) {
+        ball_.setSpeed({std::abs(ball_.getSpeed().x), ball_.getSpeed().y});
     }
+    else if (ball_.getCenter().y - ball_.getRadius() <= 0.0) {
+        ball_.setSpeed({ball_.getSpeed().x, std::abs(ball_.getSpeed().y)});
+    }
+    else if (ball_.getCenter().y + ball_.getRadius() >= static_cast<float>(WINDOW_HEIGHT)) {
+        ball_.setSpeed({ball_.getSpeed().x, -std::abs(ball_.getSpeed().y)});
+    }
+
+
+    //Collision
+    /*auto makeCollision = [&] (auto& sides, auto checkFun = [](sf::Vector2f _) {(void)_ ; return True;}, auto changeFun = [](){None;}) {
+        std::cout << "Making collisions (sides.size() = " << sides.size() << ")" << std::endl;
+        for (std::pair<sf::Vector2f, sf::Vector2f> side : sides) {
+            sf::Vector2f U {side.first-side.second};
+            float d = norme(U);
+            U = U/d * ball_.getRadius();
+            std::vector<sf::Vector2f> points {
+                {ball_.getCenter() - sf::Vector2f{U.y/d, U.x/d}}, 
+                {ball_.getCenter() + sf::Vector2f{U.y/d, U.x/d}},
+                {ball_.getCenter() - U},
+                {ball_.getCenter() + U}
+            };
+            for (sf::Vector2f p : points) {
+                auto col {collision(side.first, side.second, p, ball_.getSpeed())};
+                if (col.first && checkFun(p)) {
+                    ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()));
+                    changeFun();
+                }
+            }
+        }
+        std::cout << "Collisions made" << std::endl;
+    };*/
 
     //Blocs collision
-    for (auto bloc : conteneur_->getBlocs()) {
+    for (auto &bloc : conteneur_->getBlocs()) {
         if (bloc->isBroken()) continue;
-        const std::vector<sf::Vector2f> blocCorners = bloc->getCornerPoints();
-        const std::vector<std::pair<sf::Vector2f, sf::Vector2f>> blocSides = bloc->getSides();
+        //makeCollision(getSidesFromPoints(bloc->getCornerPoints()), [&bloc](sf::Vector2f p){return !(bloc->isIn(p));}, [&](){bloc->takeDamage(ball_.getDamage());});
+        for (std::pair<sf::Vector2f, sf::Vector2f> side : getSidesFromPoints(bloc->getCornerPoints())) {
+            sf::Vector2f U {side.first-side.second};
+            float d = norme(U);
+            U = U/d * ball_.getRadius();
+            std::vector<sf::Vector2f> points {
+                {ball_.getCenter() - sf::Vector2f{U.y/d, U.x/d}}, 
+                {ball_.getCenter() + sf::Vector2f{U.y/d, U.x/d}},
+                {ball_.getCenter() - U},
+                {ball_.getCenter() + U}
+            };
+            for (sf::Vector2f p : points) {
+                auto col {collision(side.first, side.second, p, ball_.getSpeed())};
+                if (col.first && !(bloc->isIn(p))) {
+                    ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()));
+                    bloc->takeDamage(ball_.getDamage());
+                }
+            }
+        }
+    }
 
-        for (std::pair<sf::Vector2f, sf::Vector2f> side : blocSides) {
-            auto col {collision(side.first, side.second, ball_.getCenter(), ball_.getSpeed())};
-            if (col.first && !(bloc->isIn(ball_.getCenter()))) {
-                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()));
-                bloc->takeDamage(ball_.getDamage());
+
+    //Paddle collision
+    //makeCollision(getSidesFromPoints(paddle_->getCornerPoints()), [](sf::Vector2f _) {(void)_ ; return True;}, [](){None;});
+    for (std::pair<sf::Vector2f, sf::Vector2f> side : getSidesFromPoints(paddle_->getCornerPoints())) {
+        sf::Vector2f U {side.first-side.second};
+        float d = norme(U);
+        U = U/d * ball_.getRadius();
+        std::vector<sf::Vector2f> points {
+            {ball_.getCenter() - sf::Vector2f{U.y/d, U.x/d}}, 
+            {ball_.getCenter() + sf::Vector2f{U.y/d, U.x/d}},
+            {ball_.getCenter() - U},
+            {ball_.getCenter() + U}
+        };
+        for (sf::Vector2f p : points) {
+            auto col {collision(side.first, side.second, p, ball_.getSpeed())};
+            if (col.first && !(paddle_->isIn(p))) {
+                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()) + paddle_->getSpeed() * static_cast<float>(0.5));
             }
         }
     }
 }
 
 
-template <typename BallT, typename ContT>
-void BallManager<BallT, ContT>::run(){
+template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
+void BallManager<FontTBall, FontTPad, ContT, ShapeT>::run(){
     running = true;
     //std::cout << "Running" << std::endl;
     auto now = std::chrono::steady_clock::now();

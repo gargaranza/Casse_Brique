@@ -18,7 +18,6 @@ class SquareBloc: public Bloc<sf::Vector2f, sf::RectangleShape, FontT, BlocType<
         void draw();
 
         const std::vector<sf::Vector2f> getCornerPoints() const;
-        const std::vector<std::pair<sf::Vector2f, sf::Vector2f>> getSides() const;
         inline bool isIn(sf::Vector2f vect) {return (
             vect.x > this->position_.x 
             && vect.y > this->position_.y 

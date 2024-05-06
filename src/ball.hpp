@@ -1,5 +1,5 @@
-#ifndef BALL
-#define BALL
+#ifndef BALL_H
+#define BALL_H
 
 #include <SDL2/SDL.h>
 #include <utility>
@@ -51,4 +51,4 @@ std::ostream& operator<<(std::ostream& os, const Ball<FontT>& ball) {
     return os;
 };
 
-#endif //BALL
+#endif //BALL_H

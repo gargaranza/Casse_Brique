@@ -29,17 +29,6 @@ const std::vector<sf::Vector2f> SquareBloc<FontT>::getCornerPoints() const {
 };
 
 
-template <typename FontT>
-const std::vector<std::pair<sf::Vector2f, sf::Vector2f>> SquareBloc<FontT>::getSides() const {
-    std::vector<sf::Vector2f> corners = getCornerPoints();
-    std::vector<std::pair<sf::Vector2f, sf::Vector2f>> side;
-    sf::Vector2f last_point = corners.at(corners.size() - 1);
-    for (sf::Vector2f point : corners){
-        side.push_back(std::pair<sf::Vector2f, sf::Vector2f> {last_point, point});
-        last_point = point;
-    }
-    return side;
-}
 
 
 

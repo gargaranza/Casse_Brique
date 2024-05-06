@@ -12,6 +12,7 @@
 #include "blocType.hpp"
 #include "blocContainer.hpp"
 #include "grid.cpp"
+#include "rectanglePaddle.hpp"
 #include "ball.hpp"
 #include "ballManager.cpp"
 
@@ -19,14 +20,15 @@ sf::RenderWindow* window = nullptr;
 
 using Grille = Grid<sf::Color, 33, 12, 0, 0, 0, 1>;
 
-void addNewBall(Grille &grille, std::vector<BallManager<sf::Color, Grille>*> &ballManagers, std::vector<std::unique_ptr<std::thread>> &ballThreads, BallType<sf::Color> type) {
-    auto ballMana = new BallManager<sf::Color, Grille> {
+void addNewBall(Grille &grille, Paddle<sf::Color, sf::RectangleShape>& paddle, std::vector<BallManager<sf::Color, sf::Color, Grille, sf::RectangleShape>*> &ballManagers, std::vector<std::unique_ptr<std::thread>> &ballThreads, BallType<sf::Color> type) {
+    auto ballMana = new BallManager<sf::Color, sf::Color, Grille, sf::RectangleShape> {
         *new Ball<sf::Color> {
             type, 
             {WINDOW_WIDTH / 2, WINDOW_HEIGHT - 30}, 
-            [](float r){return sf::Vector2f{2*r, 2*-std::sqrt(1-r*r)};} ((float)(rand()) / (float)(RAND_MAX))
+            [](float r, float speed){return sf::Vector2f{speed * r, speed * -std::sqrt(1-r*r)};} ((float)(rand()) / (float)(RAND_MAX), 2)
         }, 
-        &grille
+        &grille,
+        &paddle
     };
     ballManagers.push_back(std::move(ballMana));
     std::unique_ptr<std::thread> thPtr = std::make_unique<std::thread>([ballMana] () {ballMana->run();});
@@ -39,7 +41,7 @@ void main_loop(bool &running) {
     BlocType<sf::Color> resistant {sf::Color{150, 150, 150}, 50};
     BlocType<sf::Color> invincible {sf::Color{0, 0, 0}, 1000000};
 
-    BallType<sf::Color> classique {sf::Color{120, 255, 0}, 5, 10};
+    BallType<sf::Color> classiqueBall {sf::Color{120, 255, 0}, 5, 10};
 
     Grille grille {};
     grille.fill(invincible);
@@ -47,16 +49,19 @@ void main_loop(bool &running) {
     grille.fillLines(moyen, 3, 4, 5, 6);
     grille.fillLines(resistant, 2, 7, 8);
 
-    std::vector<BallManager<sf::Color, Grille>*> ballManagers {};
+    RectanglePaddle<sf::Color> plateau {sf::Color{255, 127, 0}, std::string{"Ligne"}, {100, 10}};
+
+    std::vector<BallManager<sf::Color, sf::Color, Grille, sf::RectangleShape>*> ballManagers {};
     std::vector<std::unique_ptr<std::thread>> ballThreads {};
 
-    for (size_t i = 0; i < 5; i++) {
-        addNewBall(grille, ballManagers, ballThreads, classique);
+    for (size_t i = 0; i < 2; i++) {
+        addNewBall(grille, plateau, ballManagers, ballThreads, classiqueBall);
     }
     
     while(running) {
         window->clear(sf::Color{15, 5, 107});
         grille.draw();
+        plateau.draw();
         for (auto manager : ballManagers) {
             if (manager != nullptr) manager->drawBall();
         }

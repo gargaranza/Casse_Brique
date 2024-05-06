@@ -1,5 +1,5 @@
-#ifndef BALLTYPE
-#define BALLTYPE
+#ifndef BALLTYPE_H
+#define BALLTYPE_H
 
 #include <SDL2/SDL.h>
 #include <cstddef>
@@ -21,4 +21,4 @@ class BallType {
 };
 
 
-#endif //BALLTYPE
+#endif //BALLTYPE_H

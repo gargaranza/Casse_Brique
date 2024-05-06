@@ -1,5 +1,5 @@
-#ifndef GLOBAL
-#define GLOBAL
+#ifndef GLOBAL_H
+#define GLOBAL_H
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -11,4 +11,4 @@
 
 extern sf::RenderWindow* window;
 
-#endif //GLOBAL
+#endif //GLOBAL_H
