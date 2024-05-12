@@ -1,5 +1,7 @@
 
+#include <iostream>
 #include "paddle.hpp"
+
 
 /*template <typename FontT, typename ShapeT>
 std::function<sf::Vector2f(float)> Paddle<FontT, ShapeT>::getCurve(std::string nom) {

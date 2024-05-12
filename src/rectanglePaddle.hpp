@@ -21,7 +21,7 @@ class RectanglePaddle : public Paddle<FontT, sf::RectangleShape> {
             };
         }
 
-        inline bool isIn(sf::Vector2f vect) {return
+        inline bool isIn(sf::Vector2f vect) const {return
             vect.x > (this->centerPosition_ - this->paddle_.getSize() / static_cast<float>(2)).x
             && vect.y > (this->centerPosition_ - this->paddle_.getSize() / static_cast<float>(2)).y
             && vect.x < (this->centerPosition_ + this->paddle_.getSize() / static_cast<float>(2)).x

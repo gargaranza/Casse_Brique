@@ -3,7 +3,6 @@
 #include <chrono>
 #include "ballManager.hpp"
 
-
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
 sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::intersection(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
 
@@ -23,17 +22,9 @@ template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT
 std::pair<bool, sf::Vector2f> BallManager<FontTBall, FontTPad, ContT, ShapeT>::collision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
     sf::Vector2f X {intersection(A, B, M, V)};
 
-    /*if (X != sf::Vector2f{}) {
-        std::cout << "X: (" << X.x << "," << X.y << ")\n";
-        std::cout << "A: (" << A.x << "," << A.y << ")\n";
-        std::cout << "B: (" << B.x << "," << B.y << ")\n";
-        std::cout << "M: (" << M.x << "," << M.y << ")\n";
-        std::cout << "V: (" << V.x << "," << V.y << ")" << std::endl;
-    }*/
-
     if (X == sf::Vector2f{}) return std::pair<bool, sf::Vector2f> {false, X};
     else {
-        float d = norme(X-M);//std::sqrt((X.x - M.x)*(X.x - M.x) + (X.y - M.y)*(X.y - M.y));
+        float d = norme(X-M);
         float s = (X - M).x*V.x + (X - M).y*V.y;
         if ((d <= 1.1 * std::sqrt(V.x*V.x + V.y*V.y)) && (s > 10e-8)) {
             return std::pair<bool, sf::Vector2f> {true, X};
@@ -80,34 +71,9 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
     }
 
 
-    //Collision
-    /*auto makeCollision = [&] (auto& sides, auto checkFun = [](sf::Vector2f _) {(void)_ ; return True;}, auto changeFun = [](){None;}) {
-        std::cout << "Making collisions (sides.size() = " << sides.size() << ")" << std::endl;
-        for (std::pair<sf::Vector2f, sf::Vector2f> side : sides) {
-            sf::Vector2f U {side.first-side.second};
-            float d = norme(U);
-            U = U/d * ball_.getRadius();
-            std::vector<sf::Vector2f> points {
-                {ball_.getCenter() - sf::Vector2f{U.y/d, U.x/d}}, 
-                {ball_.getCenter() + sf::Vector2f{U.y/d, U.x/d}},
-                {ball_.getCenter() - U},
-                {ball_.getCenter() + U}
-            };
-            for (sf::Vector2f p : points) {
-                auto col {collision(side.first, side.second, p, ball_.getSpeed())};
-                if (col.first && checkFun(p)) {
-                    ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()));
-                    changeFun();
-                }
-            }
-        }
-        std::cout << "Collisions made" << std::endl;
-    };*/
-
     //Blocs collision
     for (auto &bloc : conteneur_->getBlocs()) {
         if (bloc->isBroken()) continue;
-        //makeCollision(getSidesFromPoints(bloc->getCornerPoints()), [&bloc](sf::Vector2f p){return !(bloc->isIn(p));}, [&](){bloc->takeDamage(ball_.getDamage());});
         for (std::pair<sf::Vector2f, sf::Vector2f> side : getSidesFromPoints(bloc->getCornerPoints())) {
             sf::Vector2f U {side.first-side.second};
             float d = norme(U);
@@ -130,7 +96,6 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
 
 
     //Paddle collision
-    //makeCollision(getSidesFromPoints(paddle_->getCornerPoints()), [](sf::Vector2f _) {(void)_ ; return True;}, [](){None;});
     for (std::pair<sf::Vector2f, sf::Vector2f> side : getSidesFromPoints(paddle_->getCornerPoints())) {
         sf::Vector2f U {side.first-side.second};
         float d = norme(U);
@@ -144,7 +109,7 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
         for (sf::Vector2f p : points) {
             auto col {collision(side.first, side.second, p, ball_.getSpeed())};
             if (col.first && !(paddle_->isIn(p))) {
-                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()) + paddle_->getSpeed() * static_cast<float>(0.5));
+                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()) + paddle_->getSpeed() * static_cast<float>(0.1));
             }
         }
     }

@@ -22,7 +22,7 @@ class Ball{
 
     public:
         Ball() = delete;
-        inline Ball(BallType<FontT> type, sf::Vector2f position, sf::Vector2f vitesse): type_{type}, centerPosition_{position}, vitesse_{vitesse} {
+        inline Ball(const BallType<FontT> type, const sf::Vector2f position, const sf::Vector2f vitesse): type_{type}, centerPosition_{position}, vitesse_{vitesse} {
             disk_.setFillColor(type_.getFont());
             disk_.setRadius(type_.getRayon());
             setPosition();
@@ -34,10 +34,11 @@ class Ball{
         inline void updatePosition() {centerPosition_ += vitesse_; setPosition(); };
         inline void setSpeed(sf::Vector2f vitesse) {vitesse_ = vitesse;};
 
-        inline sf::Vector2f getCenter() const {return centerPosition_;};
+        inline const sf::Vector2f getCenter() const {return centerPosition_;};
         inline float getRadius() const {return type_.getRayon();};
-        inline sf::Vector2f getSpeed() const {return vitesse_;};
+        inline const sf::Vector2f getSpeed() const {return vitesse_;};
         inline float getDamage() const {return type_.getDegats();};
+        inline const BallType<FontT>& getType() const {return type_;};
 
         inline void draw() {window->draw(disk_); window->display();};
 
