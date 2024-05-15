@@ -14,7 +14,7 @@ class BlocType {
         inline BlocType(FontT font, size_t pv): PV_MAX{pv}, FONT_BASE{font} {};
 
         inline size_t getPV() const {return PV_MAX;};
-        inline FontT getFont() const {return FONT_BASE;};
+        inline const FontT getFont() const {return FONT_BASE;};
 
 };
 

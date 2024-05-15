@@ -15,10 +15,10 @@ class SquareBloc: public Bloc<sf::Vector2f, sf::RectangleShape, FontT, BlocType<
         SquareBloc() = delete;
 
         SquareBloc(sf::Vector2f pos, float c, FontT font, size_t pv);
-        void draw();
+        void draw() const;
 
-        const std::vector<sf::Vector2f> getCornerPoints() const;
-        inline bool isIn(sf::Vector2f vect) {return (
+        const std::vector<sf::Vector2f> getCornerPoints() const override;
+        inline bool isIn(sf::Vector2f vect) const override {return (
             vect.x > this->position_.x 
             && vect.y > this->position_.y 
             && vect.x < this->position_.x + this->forme_.getSize().x

@@ -11,7 +11,7 @@ SquareBloc<FontT>::SquareBloc(sf::Vector2f pos, float c, FontT font, size_t pv):
 };
 
 template <typename FontT>
-void SquareBloc<FontT>::draw() {
+void SquareBloc<FontT>::draw() const {
     if (!this->isBroken()) {
         window->draw(this->forme_);
     }

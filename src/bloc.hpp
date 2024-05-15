@@ -22,12 +22,11 @@ class Bloc{
         Bloc() = delete;
         virtual ~Bloc() = default;
 
-        inline bool isBroken() {return PV_ == 0;}
+        inline bool isBroken() const {return PV_ == 0;}
         inline bool takeDamage(size_t dmg) {if (isBroken()) return true ; PV_ = std::max(PV_<1000000 ? static_cast<int>(PV_) - dmg : PV_, static_cast<size_t>(0)) ; return isBroken();}
 
-        virtual const std::vector<PosT> getCornerPoints() {return std::vector<PosT>{};};
-
-        virtual bool isIn(sf::Vector2f vect) {return vect == sf::Vector2f{};};
+        virtual const std::vector<PosT> getCornerPoints() const = 0;
+        virtual bool isIn(sf::Vector2f vect) const = 0;
         
         inline PosT getPosition() const {return position_;};
         

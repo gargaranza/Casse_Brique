@@ -19,7 +19,7 @@ class Grid : public BlocContainer<width, height, SquareBloc<FontT>, FontT> {
         inline Grid(): BlocContainer<width, height, SquareBloc<FontT>, FontT>::BlocContainer{}, taille_{static_cast<float>(WINDOW_WIDTH - right_shift - left_shift)} {};
 
     private:
-        SquareBloc<FontT>* createBloc(BlocType<FontT> type, size_t i, size_t j) override;
+        std::shared_ptr<SquareBloc<FontT>> createBloc(const BlocType<FontT>& type, size_t i, size_t j) const override;
 };
 
 #endif //GRID_H

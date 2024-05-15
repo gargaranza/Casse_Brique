@@ -9,12 +9,12 @@
 template <size_t dim1, size_t dim2, typename BlocT, typename FontT>
 class BlocContainer {
     protected:
-        std::array<std::array<BlocT*, dim2>, dim1> container_;
+        std::array<std::array<std::shared_ptr<BlocT>, dim2>, dim1> container_;
 
-        virtual BlocT* createBloc(BlocType<FontT> type, size_t i, size_t j) = 0;
+        virtual std::shared_ptr<BlocT> createBloc(const BlocType<FontT>& type, size_t i, size_t j) const = 0;
 
     public:
-        ~BlocContainer();
+        //~BlocContainer();
 
         void addBloc(BlocType<FontT> type, size_t i, size_t j);
 
@@ -24,9 +24,9 @@ class BlocContainer {
         void fillColumns(BlocType<FontT> type, size_t nColomns, ...);
         void fill(BlocType<FontT> type);
 
-        std::vector<BlocT*> getBlocs();
+        std::vector<std::shared_ptr<BlocT>> getBlocs() const;
 
-        BlocT* getCase(size_t i, size_t j) {return this->container_.at(i).at(j);};
+        std::shared_ptr<BlocT> getCase(size_t i, size_t j) const {return this->container_.at(i).at(j);};
 
         void draw() const;
 };

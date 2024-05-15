@@ -75,8 +75,8 @@ void BlocContainer<dim1, dim2, BlocT, FontT>::draw() const {
 };
 
 template <size_t dim1, size_t dim2, typename BlocT, typename FontT>
-std::vector<BlocT*> BlocContainer<dim1, dim2, BlocT, FontT>::getBlocs(){
-    std::vector<BlocT*> retVect {};
+std::vector<std::shared_ptr<BlocT>> BlocContainer<dim1, dim2, BlocT, FontT>::getBlocs() const {
+    std::vector<std::shared_ptr<BlocT>> retVect {};
 
     for (auto line : container_) {
         for (auto bloc : line) {
@@ -87,13 +87,13 @@ std::vector<BlocT*> BlocContainer<dim1, dim2, BlocT, FontT>::getBlocs(){
     return retVect;
 };
 
-template <size_t dim1, size_t dim2, typename BlocT, typename FontT>
+/*template <size_t dim1, size_t dim2, typename BlocT, typename FontT>
 BlocContainer<dim1, dim2, BlocT, FontT>::~BlocContainer() {
     for (size_t i = 0 ; i < dim1 ; i++) {
         for (size_t j = 0 ; j < dim2 ; j++) {
             delete container_.at(i).at(j);
         }
     }
-};
+};*/
 
 

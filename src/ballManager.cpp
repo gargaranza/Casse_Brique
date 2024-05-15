@@ -4,7 +4,7 @@
 #include "ballManager.hpp"
 
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
-sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::intersection(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
+const sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::intersection(const sf::Vector2f& A, const sf::Vector2f& B, const sf::Vector2f& M, const sf::Vector2f& V) const {
 
     float det = (A.y - B.y)*V.x + (B.x - A.x) * V.y;
     sf::Vector2f P {A.x*(B.y-A.y) - A.y*(B.x-A.x), M.x*V.y - M.y*V.x};
@@ -19,7 +19,7 @@ sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::intersection(sf::V
 };
 
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
-std::pair<bool, sf::Vector2f> BallManager<FontTBall, FontTPad, ContT, ShapeT>::collision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V) {
+const std::pair<bool, sf::Vector2f> BallManager<FontTBall, FontTPad, ContT, ShapeT>::collision(const sf::Vector2f& A, const sf::Vector2f& B, const sf::Vector2f& M, const sf::Vector2f& V) const {
     sf::Vector2f X {intersection(A, B, M, V)};
 
     if (X == sf::Vector2f{}) return std::pair<bool, sf::Vector2f> {false, X};
@@ -33,7 +33,7 @@ std::pair<bool, sf::Vector2f> BallManager<FontTBall, FontTPad, ContT, ShapeT>::c
 };
 
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
-sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::updateSpeedCollision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f V) {
+const sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::updateSpeedCollision(const sf::Vector2f& A, const sf::Vector2f& B, const sf::Vector2f& V) const {
     sf::Vector2f U {A-B};
     float d = norme(U);
     U = sf::Vector2f {U.y/d, -U.x/d};
@@ -42,7 +42,7 @@ sf::Vector2f BallManager<FontTBall, FontTPad, ContT, ShapeT>::updateSpeedCollisi
 }
 
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
-const std::vector<std::pair<sf::Vector2f, sf::Vector2f>> BallManager<FontTBall, FontTPad, ContT, ShapeT>::getSidesFromPoints(std::vector<sf::Vector2f> corners) const {
+const std::vector<std::pair<sf::Vector2f, sf::Vector2f>> BallManager<FontTBall, FontTPad, ContT, ShapeT>::getSidesFromPoints(const std::vector<sf::Vector2f>& corners) const {
     std::vector<std::pair<sf::Vector2f, sf::Vector2f>> sides;
     sf::Vector2f last_point = corners.at(corners.size() - 1);
     for (sf::Vector2f point : corners){
@@ -109,14 +109,14 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
         for (sf::Vector2f p : points) {
             auto col {collision(side.first, side.second, p, ball_.getSpeed())};
             if (col.first && !(paddle_->isIn(p))) {
-                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()) + paddle_->getSpeed() * static_cast<float>(0.05));
+                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()) + paddle_->getSpeed() * static_cast<float>(0.10));
             }
         }
     }
 }
 
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
-bool BallManager<FontTBall, FontTPad, ContT, ShapeT>::isBallOutside() {
+bool BallManager<FontTBall, FontTPad, ContT, ShapeT>::isBallOutside() const {
     return (ball_.getCenter().x - 5*ball_.getRadius() >= static_cast<float>(WINDOW_WIDTH)) || 
         (ball_.getCenter().x + 5*ball_.getRadius() <= 0.0) || 
         (ball_.getCenter().y - 5*ball_.getRadius() >= static_cast<float>(WINDOW_WIDTH)) || 

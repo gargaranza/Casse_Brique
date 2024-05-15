@@ -28,15 +28,15 @@ using PaddleShapeType = sf::RectangleShape;
 using Grille = Grid<BlocFontType, 33, 12, 0, 0, 0, 1>;
 using ContainerType = Grille;
 
-void addNewBall(Grille &grille, const Paddle<PaddleFontType, PaddleShapeType>& paddle, std::vector<BallManager<BallFontType, PaddleFontType, ContainerType, PaddleShapeType>*> &ballManagers, std::vector<std::unique_ptr<std::thread>> &ballThreads, const BallType<BallFontType> type) {
+void addNewBall(std::shared_ptr<Grille> grille, std::shared_ptr<Paddle<PaddleFontType, PaddleShapeType>> paddle, std::vector<BallManager<BallFontType, PaddleFontType, ContainerType, PaddleShapeType>*> &ballManagers, std::vector<std::unique_ptr<std::thread>> &ballThreads, const BallType<BallFontType> type) {
     auto ballMana = new BallManager<BallFontType, PaddleFontType, ContainerType, PaddleShapeType> {
         *new Ball<BallFontType> {
             type, 
             {WINDOW_WIDTH / 2, WINDOW_HEIGHT - 30}, 
             [](float r, float speed){return sf::Vector2f{speed * r, speed * -std::sqrt(1-r*r)};} ((float)(rand()) / (float)(RAND_MAX), 2)
         }, 
-        &grille,
-        &paddle
+        grille,
+        paddle
     };
     ballManagers.push_back(std::move(ballMana));
     std::unique_ptr<std::thread> thPtr = std::make_unique<std::thread>([ballMana] () {ballMana->run();});
@@ -111,14 +111,14 @@ void main_loop() {
         {"classique", {sf::Color{120, 255, 0}, 5, 10}}
     };
 
-    ContainerType grille {};
-    grille.fill(blocTypes_.at("invincible"));
-    grille.fillLines(blocTypes_.at("faible"), 4, 0, 1, 2, 3);
-    grille.fillLines(blocTypes_.at("moyen"), 3, 4, 5, 6);
-    grille.fillLines(blocTypes_.at("resistant"), 2, 7, 8);
+    std::shared_ptr<Grille> grille {new Grille {}};
+    grille->fill(blocTypes_.at("invincible"));
+    grille->fillLines(blocTypes_.at("faible"), 4, 0, 1, 2, 3);
+    grille->fillLines(blocTypes_.at("moyen"), 3, 4, 5, 6);
+    grille->fillLines(blocTypes_.at("resistant"), 2, 7, 8);
 
-    RectanglePaddle<PaddleFontType> plateau {sf::Color{255, 127, 0}, std::string{"Ligne"}, {150, 10}};
-    PaddleManager<PaddleFontType, PaddleShapeType> plateauManager {&plateau};
+    std::shared_ptr<RectanglePaddle<PaddleFontType>> plateau {new RectanglePaddle<PaddleFontType>{sf::Color{255, 127, 0}, std::string{"Ligne"}, {150, 10}}};
+    PaddleManager<PaddleFontType, PaddleShapeType> plateauManager {plateau};
 
     std::vector<BallManager<BallFontType, PaddleFontType, ContainerType, PaddleShapeType>*> ballManagers {};
     std::vector<std::unique_ptr<std::thread>> ballThreads {};
@@ -134,7 +134,7 @@ void main_loop() {
         triggerEvents(running, pause, plateauManager, ballManagers);
         if (!pause) {
             window->clear(sf::Color{15, 5, 107});
-            grille.draw();
+            grille->draw();
             plateauManager.move();
             plateauManager.drawPaddle();
             for (auto manager : ballManagers) {

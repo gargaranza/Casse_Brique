@@ -6,7 +6,7 @@
 template <typename FontT, typename ShapeT>
 class PaddleManager {
     private:
-        Paddle<FontT, ShapeT>* const paddle_;
+        std::shared_ptr<Paddle<FontT, ShapeT>> paddle_;
         sf::Vector2f direction_;
 
         sf::Vector2f mousePosition_;
@@ -16,11 +16,11 @@ class PaddleManager {
 
     public:
         PaddleManager() = default;
-        inline PaddleManager(Paddle<FontT, ShapeT>* paddle): paddle_{paddle} {};
+        inline PaddleManager(std::shared_ptr<Paddle<FontT, ShapeT>> paddle): paddle_{paddle} {};
         void move();
         inline void drawPaddle() {paddle_->draw();};
 
-        inline const Paddle<FontT, ShapeT>& getPaddle() const {return *paddle_;};
+        inline const std::shared_ptr<Paddle<FontT, ShapeT>> getPaddle() const {return paddle_;};
 
         inline void addUpDirection() {direction_ += sf::Vector2f {0.0, -1.0}; mouseUsed_ = false;};
         inline void addDownDirection() {direction_ += sf::Vector2f {0.0, 1.0}; mouseUsed_ = false;};
