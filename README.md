@@ -1,8 +1,9 @@
 # Make it work
 
-J'ai utilisé la library SFML dont l'instalation se fait comme suit:
+J'ai utilisé la library SFML dont l'instalation se fait comme suit (avec X11 si besoin):
 ```
 sudo apt-get install libsfml-dev
+sudo apt install libx11-dev
 ```
 
 Ensuite, le code compile avec
