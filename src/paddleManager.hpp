@@ -9,8 +9,10 @@ class PaddleManager {
         Paddle<FontT, ShapeT>* const paddle_;
         sf::Vector2f direction_;
 
+        sf::Vector2f mousePosition_;
+        bool mouseUsed_;
+
         float norme(sf::Vector2f vect) {return std::sqrt(vect.x*vect.x + vect.y*vect.y);};
-        //float dotProd(sf::Vector2f v1, sf::Vector2f v2) {return v1.x*v2.x + v1.y*v2.y;};
 
     public:
         PaddleManager() = default;
@@ -20,17 +22,17 @@ class PaddleManager {
 
         inline const Paddle<FontT, ShapeT>& getPaddle() const {return *paddle_;};
 
-        inline void addUpDirection() {direction_ += sf::Vector2f {0.0, -1.0};};
-        inline void addDownDirection() {direction_ += sf::Vector2f {0.0, 1.0};};
-        inline void addLeftDirection() {direction_ += sf::Vector2f {-1.0, 0.0};};
-        inline void addRightDirection() {direction_ += sf::Vector2f {1.0, 0.0};};
+        inline void addUpDirection() {direction_ += sf::Vector2f {0.0, -1.0}; mouseUsed_ = false;};
+        inline void addDownDirection() {direction_ += sf::Vector2f {0.0, 1.0}; mouseUsed_ = false;};
+        inline void addLeftDirection() {direction_ += sf::Vector2f {-1.0, 0.0}; mouseUsed_ = false;};
+        inline void addRightDirection() {direction_ += sf::Vector2f {1.0, 0.0}; mouseUsed_ = false;};
 
-        inline void removeUpDirection() {direction_ -= sf::Vector2f {0.0, -1.0};};
-        inline void removeDownDirection() {direction_ -= sf::Vector2f {0.0, 1.0};};
-        inline void removeLeftDirection() {direction_ -= sf::Vector2f {-1.0, 0.0};};
-        inline void removeRightDirection() {direction_ -= sf::Vector2f {1.0, 0.0};};
+        inline void removeUpDirection() {direction_ -= sf::Vector2f {0.0, -1.0}; mouseUsed_ = false;};
+        inline void removeDownDirection() {direction_ -= sf::Vector2f {0.0, 1.0}; mouseUsed_ = false;};
+        inline void removeLeftDirection() {direction_ -= sf::Vector2f {-1.0, 0.0}; mouseUsed_ = false;};
+        inline void removeRightDirection() {direction_ -= sf::Vector2f {1.0, 0.0}; mouseUsed_ = false;};
 
-        void setMousePosition(sf::Vector2f position);
+        inline void setMousePosition(sf::Vector2f position) {mousePosition_ = position; mouseUsed_ = true;};
 
         ~PaddleManager() = default;
 

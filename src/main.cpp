@@ -43,7 +43,7 @@ void addNewBall(Grille &grille, const Paddle<PaddleFontType, PaddleShapeType>& p
     ballThreads.push_back(std::move(thPtr));
 }
 
-void triggerEvents(bool& running, PaddleManager<PaddleFontType, PaddleShapeType>& plateauManager) {
+void triggerEvents(bool& running, bool& pause, PaddleManager<PaddleFontType, PaddleShapeType>& plateauManager, std::vector<BallManager<BallFontType, PaddleFontType, ContainerType, PaddleShapeType>*>& ballManagers) {
     sf::Event event;
     while(window->pollEvent(event)) {
         switch (event.type) {
@@ -63,6 +63,10 @@ void triggerEvents(bool& running, PaddleManager<PaddleFontType, PaddleShapeType>
                         break;
                     case sf::Keyboard::Down:
                         plateauManager.addDownDirection();
+                        break;
+                    case sf::Keyboard::Escape:
+                        pause = !pause;
+                        for (auto manager : ballManagers) if (manager != nullptr) (pause ? manager->pause() : manager->start());
                         break;
                     default:
                         break;
@@ -86,6 +90,9 @@ void triggerEvents(bool& running, PaddleManager<PaddleFontType, PaddleShapeType>
                         break;
                 }
                 break;
+            case sf::Event::MouseMoved:
+                plateauManager.setMousePosition(sf::Vector2f{static_cast<float>(event.mouseMove.x), static_cast<float>(event.mouseMove.y)});
+                break;
             default:
                 break;
         }
@@ -94,18 +101,21 @@ void triggerEvents(bool& running, PaddleManager<PaddleFontType, PaddleShapeType>
 
 
 void main_loop() {
-    BlocType<BlocFontType> faible {sf::Color{0, 0, 200}, 10};
-    BlocType<BlocFontType> moyen {sf::Color{200, 0, 0}, 20};
-    BlocType<BlocFontType> resistant {sf::Color{150, 150, 150}, 50};
-    BlocType<BlocFontType> invincible {sf::Color{0, 0, 0}, 1000000};
-
-    BallType<BallFontType> classiqueBall {sf::Color{120, 255, 0}, 5, 10};
+    std::map<std::string, BlocType<BlocFontType>> blocTypes_ {
+        {"faible", {sf::Color{0, 0, 200}, 10}}, 
+        {"moyen", {sf::Color{200, 0, 0}, 20}},
+        {"resistant", {sf::Color{150, 150, 150}, 50}},
+        {"invincible", {sf::Color{0, 0, 0}, 1000000}}
+    };
+    std::map<std::string, BallType<BallFontType>> ballTypes_ {
+        {"classique", {sf::Color{120, 255, 0}, 5, 10}}
+    };
 
     ContainerType grille {};
-    grille.fill(invincible);
-    grille.fillLines(faible, 4, 0, 1, 2, 3);
-    grille.fillLines(moyen, 3, 4, 5, 6);
-    grille.fillLines(resistant, 2, 7, 8);
+    grille.fill(blocTypes_.at("invincible"));
+    grille.fillLines(blocTypes_.at("faible"), 4, 0, 1, 2, 3);
+    grille.fillLines(blocTypes_.at("moyen"), 3, 4, 5, 6);
+    grille.fillLines(blocTypes_.at("resistant"), 2, 7, 8);
 
     RectanglePaddle<PaddleFontType> plateau {sf::Color{255, 127, 0}, std::string{"Ligne"}, {150, 10}};
     PaddleManager<PaddleFontType, PaddleShapeType> plateauManager {&plateau};
@@ -113,20 +123,35 @@ void main_loop() {
     std::vector<BallManager<BallFontType, PaddleFontType, ContainerType, PaddleShapeType>*> ballManagers {};
     std::vector<std::unique_ptr<std::thread>> ballThreads {};
 
-    for (size_t i = 0; i < 1; i++) {
-        addNewBall(grille, plateauManager.getPaddle(), ballManagers, ballThreads, classiqueBall);
+    for (size_t i = 0; i < 3; i++) {
+        addNewBall(grille, plateauManager.getPaddle(), ballManagers, ballThreads, ballTypes_.at("classique"));
     }
+
     bool running = true;
+    bool pause = false;
+    for (auto manager : ballManagers) if (manager != nullptr) manager->start();
     while(running) {
-        triggerEvents(running, plateauManager);
-        window->clear(sf::Color{15, 5, 107});
-        grille.draw();
-        plateauManager.move();
-        plateauManager.drawPaddle();
-        for (auto manager : ballManagers) {
-            if (manager != nullptr) manager->drawBall();
+        triggerEvents(running, pause, plateauManager, ballManagers);
+        if (!pause) {
+            window->clear(sf::Color{15, 5, 107});
+            grille.draw();
+            plateauManager.move();
+            plateauManager.drawPaddle();
+            for (auto manager : ballManagers) {
+                if (manager != nullptr) manager->drawBall();
+            }
         }
+        
         std::this_thread::sleep_for(std::chrono::milliseconds(3));
+
+        if (!pause) {
+            bool stop = true;
+            for (auto& manager : ballManagers) if (manager != nullptr && !manager->isStoped()) stop = false;
+            if (stop) {
+                running = false;
+                std::cout << "Stopping" << std::endl;
+            }
+        }
     }
 
     for (auto manager : ballManagers) if (manager != nullptr) manager->stop();

@@ -16,10 +16,13 @@ class BallManager{
         ContT* conteneur_;
 
         bool running_ = true;
+        bool pause_ = true;
 
         float norme(sf::Vector2f vect) {return std::sqrt(vect.x*vect.x + vect.y*vect.y);};
         float dotProd(sf::Vector2f v1, sf::Vector2f v2) {return v1.x*v2.x + v1.y*v2.y;};
         void makeCollisions();
+        bool isBallOutside();
+
         sf::Vector2f intersection(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V);
         std::pair<bool, sf::Vector2f> collision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f M, sf::Vector2f V);
         sf::Vector2f updateSpeedCollision(sf::Vector2f A, sf::Vector2f B, sf::Vector2f V);
@@ -29,7 +32,11 @@ class BallManager{
         inline BallManager(Ball<FontTBall> &ball, ContT* conteneur, const Paddle<FontTPad, ShapeT>* paddle): ball_{ball}, paddle_{paddle}, conteneur_{conteneur} {/*std::cout << "Ball manager :" << this << ", ball :" << ball_ << std::endl;*/};
 
         void run();
+        inline void start() {running_ = true; pause_ = false;};
+        inline void pause() {pause_ = true;};
         inline void stop() {running_ = false;};
+
+        inline bool isStoped() {return !running_;};
         inline void drawBall() {ball_.draw();};
 
         inline const Ball<FontTBall>& getBall() const {return ball_;};

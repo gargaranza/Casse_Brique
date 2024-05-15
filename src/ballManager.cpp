@@ -115,6 +115,14 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
     }
 }
 
+template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
+bool BallManager<FontTBall, FontTPad, ContT, ShapeT>::isBallOutside() {
+    return (ball_.getCenter().x - 5*ball_.getRadius() >= static_cast<float>(WINDOW_WIDTH)) || 
+        (ball_.getCenter().x + 5*ball_.getRadius() <= 0.0) || 
+        (ball_.getCenter().y - 5*ball_.getRadius() >= static_cast<float>(WINDOW_WIDTH)) || 
+        (ball_.getCenter().y + 5*ball_.getRadius() <= 0.0);
+}
+
 
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
 void BallManager<FontTBall, FontTPad, ContT, ShapeT>::run(){
@@ -122,8 +130,11 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::run(){
     //std::cout << "Running" << std::endl;
     auto now = std::chrono::steady_clock::now();
     while (running_) {
-        makeCollisions();
-        ball_.updatePosition();
+        if (isBallOutside()) stop();
+        if (!pause_) {
+            makeCollisions();
+            ball_.updatePosition();
+        }
         std::this_thread::sleep_until(now + std::chrono::milliseconds(3));
         now = std::chrono::steady_clock::now();
     }

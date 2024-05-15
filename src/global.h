@@ -7,8 +7,8 @@
 #include <X11/Xlib.h>
 #include <memory>
 
-#define WINDOW_WIDTH 700
-#define WINDOW_HEIGHT 700
+#define WINDOW_WIDTH 900
+#define WINDOW_HEIGHT 900
 
 extern const std::shared_ptr<sf::RenderWindow> window;
 
