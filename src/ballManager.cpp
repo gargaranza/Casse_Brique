@@ -66,9 +66,9 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
     else if (ball_.getCenter().y - ball_.getRadius() <= 0.0) {
         ball_.setSpeed({ball_.getSpeed().x, std::abs(ball_.getSpeed().y)});
     }
-    else if (ball_.getCenter().y + ball_.getRadius() >= static_cast<float>(WINDOW_HEIGHT)) {
+    /*else if (ball_.getCenter().y + ball_.getRadius() >= static_cast<float>(WINDOW_HEIGHT)) {
         ball_.setSpeed({ball_.getSpeed().x, -std::abs(ball_.getSpeed().y)});
-    }
+    }*/
 
 
     //Blocs collision
@@ -109,7 +109,7 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
         for (sf::Vector2f p : points) {
             auto col {collision(side.first, side.second, p, ball_.getSpeed())};
             if (col.first && !(paddle_->isIn(p))) {
-                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()) + paddle_->getSpeed() * static_cast<float>(0.1));
+                ball_.setSpeed(updateSpeedCollision(side.first, side.second, ball_.getSpeed()) + paddle_->getSpeed() * static_cast<float>(0.05));
             }
         }
     }
@@ -118,10 +118,10 @@ void BallManager<FontTBall, FontTPad, ContT, ShapeT>::makeCollisions() {
 
 template <typename FontTBall, typename FontTPad, typename ContT, typename ShapeT>
 void BallManager<FontTBall, FontTPad, ContT, ShapeT>::run(){
-    running = true;
+    running_ = true;
     //std::cout << "Running" << std::endl;
     auto now = std::chrono::steady_clock::now();
-    while (running) {
+    while (running_) {
         makeCollisions();
         ball_.updatePosition();
         std::this_thread::sleep_until(now + std::chrono::milliseconds(3));

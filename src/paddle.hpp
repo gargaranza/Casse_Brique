@@ -44,7 +44,7 @@ class Paddle {
         inline const sf::Vector2f getPosition() const {return centerPosition_;};
         inline const sf::Vector2f getSpeed() const {return celerite_;};
 
-        virtual const std::vector<sf::Vector2f> getCornerPoints() const {return std::vector<sf::Vector2f> {};};
+        virtual const std::vector<sf::Vector2f> getCornerPoints() const = 0;
         virtual bool isIn(sf::Vector2f vect) const {return vect == sf::Vector2f{};};
 
         inline void draw() {window->draw(paddle_); window->display();};

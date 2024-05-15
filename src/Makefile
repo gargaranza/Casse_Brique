@@ -8,7 +8,7 @@ CFLAGS = -std=c++20 -Wall -Wextra
 SDLFLAGS = -lsfml-graphics -lsfml-window -lsfml-system -lX11
 
 # Source files
-SRCS = main.cpp paddle.cpp squareBloc.cpp grid.cpp ballManager.cpp paddleManager.cpp
+SRCS = main.cpp paddle.cpp squareBloc.cpp blocContainer.cpp grid.cpp ballManager.cpp paddleManager.cpp
 
 # Object files
 OBJS = $(SRCS:.cpp=.o)

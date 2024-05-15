@@ -1,22 +1,34 @@
 #ifndef BLOCCONTAINER_H
 #define BLOCCONTAINER_H
 
+#include <iostream>
 #include "global.h"
+#include "blocType.hpp"
 
-template <typename ContT>
+
+template <size_t dim1, size_t dim2, typename BlocT, typename FontT>
 class BlocContainer {
     protected:
-        ContT container_;
+        std::array<std::array<BlocT*, dim2>, dim1> container_;
 
-        BlocContainer() = default;
-        inline BlocContainer(ContT &container): container_{container} {};
+        virtual BlocT* createBloc(BlocType<FontT> type, size_t i, size_t j) = 0;
 
     public:
-        virtual ~BlocContainer() {};
+        ~BlocContainer();
 
-        virtual void draw() const {};
-        template <typename Bloc>
-        std::vector<Bloc*> getBlocs() {return std::vector<Bloc*> {};};
+        void addBloc(BlocType<FontT> type, size_t i, size_t j);
+
+        void fillLine(BlocType<FontT> type, size_t j);
+        void fillLines(BlocType<FontT> type, size_t nLines, ...);
+        void fillColumn(BlocType<FontT> type, size_t i);
+        void fillColumns(BlocType<FontT> type, size_t nColomns, ...);
+        void fill(BlocType<FontT> type);
+
+        std::vector<BlocT*> getBlocs();
+
+        BlocT* getCase(size_t i, size_t j) {return this->container_.at(i).at(j);};
+
+        void draw() const;
 };
 
 #endif //BLOCCONTAINER_H

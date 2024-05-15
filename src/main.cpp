@@ -11,7 +11,7 @@
 #include "global.h"
 #include "squareBloc.cpp"
 #include "blocType.hpp"
-#include "blocContainer.hpp"
+#include "blocContainer.cpp"
 #include "grid.cpp"
 #include "paddle.cpp"
 #include "rectanglePaddle.hpp"
@@ -19,7 +19,7 @@
 #include "ballManager.cpp"
 #include "paddleManager.cpp"
 
-sf::RenderWindow* window = nullptr;
+const std::shared_ptr<sf::RenderWindow> window {new sf::RenderWindow{sf::VideoMode{WINDOW_WIDTH, WINDOW_HEIGHT}, "Casse Brique"}};
 
 using BlocFontType = sf::Color;
 using BallFontType = sf::Color;
@@ -93,7 +93,7 @@ void triggerEvents(bool& running, PaddleManager<PaddleFontType, PaddleShapeType>
 }
 
 
-void main_loop(bool &running) {
+void main_loop() {
     BlocType<BlocFontType> faible {sf::Color{0, 0, 200}, 10};
     BlocType<BlocFontType> moyen {sf::Color{200, 0, 0}, 20};
     BlocType<BlocFontType> resistant {sf::Color{150, 150, 150}, 50};
@@ -116,7 +116,7 @@ void main_loop(bool &running) {
     for (size_t i = 0; i < 1; i++) {
         addNewBall(grille, plateauManager.getPaddle(), ballManagers, ballThreads, classiqueBall);
     }
-
+    bool running = true;
     while(running) {
         triggerEvents(running, plateauManager);
         window->clear(sf::Color{15, 5, 107});
@@ -150,12 +150,10 @@ int main(int argc, char const *argv[]) {
     }
 
 
-    window = new sf::RenderWindow{sf::VideoMode{WINDOW_WIDTH, WINDOW_HEIGHT}, "Casse Brique"};
     window->setKeyRepeatEnabled(false);
     window->setActive(false);
     
-    bool running = true;
-    std::thread mainLoopThread ([&running] () {main_loop(running);});
+    std::thread mainLoopThread ([] () {main_loop();});
     
     mainLoopThread.join();
 

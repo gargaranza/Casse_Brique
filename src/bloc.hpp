@@ -15,12 +15,11 @@ class Bloc{
 
         size_t PV_;
 
-        Bloc() = delete;
-
         inline Bloc(PosT position, FormeT forme, TypeT type, FontT font, size_t PV): 
             position_{position}, forme_{forme}, type_{type}, font_{font}, PV_{PV} {};
 
     public:
+        Bloc() = delete;
         virtual ~Bloc() = default;
 
         inline bool isBroken() {return PV_ == 0;}
