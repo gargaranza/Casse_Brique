@@ -14,7 +14,7 @@ make
 
 Et s'execute avec
 ```
-./casse_brique
+../casse_brique
 ```
 
 
