@@ -14,7 +14,7 @@ SRCS = main.cpp paddle.cpp squareBloc.cpp blocContainer.cpp grid.cpp ballManager
 OBJS = $(SRCS:.cpp=.o)
 
 # Executable name
-EXEC = casse_brique
+EXEC = ../casse_brique
 
 # Target
 all: $(EXEC)
